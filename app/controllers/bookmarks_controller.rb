@@ -11,14 +11,33 @@ class BookmarksController < ApplicationController
   end
 
   def create
-  	#@placeholder = [:bookmarks][:file]
-  	@bookmarks = current_user.bookmarks(bookmark_params)
+  	@placeholder = params[:bookmark][:file]
+    data = @placeholder.read
+    array = []
+    @bookmarksarray = []
+    @bookmarks = current_user.bookmarks.build #will save add new row into bookmarks but associate user_id with current_user
+    
+    data.each_line do |line|
+    array << line.match(/A HREF=(["'])(?:(?=(\\?))\2.)*?\1/)
+    end
+    
+    array.each do | bookmark |
+    @bookmarksarray << bookmark.to_s.match(/(["'])(?:(?=(\\?))\2.)*?\1/).to_s.gsub('"', '') unless bookmark == nil
+    
+    end 
+    
+    @bookmarksarray.slice!(0)
+    
+    #can't do bookmarks.url.save because save is acting on string. Save is an ActiveRecord method. 
 
-  	#@bookmarks = current_user.bookmarks.build(bookmark_params)
-  	#data = @bookmarks.
-  	data = @bookmarks.file.read
+    #@bookmarksarray.each do | url |
+      #@bookmarks.url = url
+      #if !@bookmarks.url.nil?
+        #@bookmarks.save
+      #end
+    #end
 
-  	render :text => data
+  	render :text => @bookmarksarray
   end
 
   def destroy
@@ -37,6 +56,6 @@ class BookmarksController < ApplicationController
 	private
 	def bookmark_params
       params.require(:bookmark).permit(:file)
-    end
+  end
 
 end
