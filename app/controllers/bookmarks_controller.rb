@@ -8,10 +8,9 @@ class BookmarksController < ApplicationController
   end
 
   def show
-    #if data[0..34] == '<!DOCTYPE NETSCAPE-Bookmark-file-1>'
-      #data.sub!("<!DOCTYPE NETSCAPE-Bookmark-file-1>", "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n
+      #if data[0..34] == '<!DOCTYPE NETSCAPE-Bookmark-file-1>'
+        #data.sub!("<!DOCTYPE NETSCAPE-Bookmark-file-1>", "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n
       #<link rel=\"stylesheet\" type=\"text/css\" href=\"app\assets\stylesheets\application.css\">")
-      #@new_url = current_user.bookmarks.build(url: 'data')
   end
 
   def create
@@ -27,12 +26,18 @@ class BookmarksController < ApplicationController
       #end
     #end
 
-      if @bookmarks.save
+    if data[0..34] == '<!DOCTYPE NETSCAPE-Bookmark-file-1>'
+      data.sub!("<!DOCTYPE NETSCAPE-Bookmark-file-1>", "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n
+      <link rel=\"stylesheet\" type=\"text/css\" href=\"app\assets\stylesheets\application.css\">")
+      @new_url = current_user.bookmarks.build(url: data.force_encoding('UTF-8'))
+
+      if @new_url.save
         flash[:success] = "Bookmarks Saved"
         redirect_to bookmarks_path
       else
         render :text => 'did not load correctly, please upload a bookmark file'
       end
+
     end
   end
 
