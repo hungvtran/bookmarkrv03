@@ -8,26 +8,16 @@ class BookmarksController < ApplicationController
   end
 
   def show
+    #if data[0..34] == '<!DOCTYPE NETSCAPE-Bookmark-file-1>'
+      #data.sub!("<!DOCTYPE NETSCAPE-Bookmark-file-1>", "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n
+      #<link rel=\"stylesheet\" type=\"text/css\" href=\"app\assets\stylesheets\application.css\">")
+      #@new_url = current_user.bookmarks.build(url: 'data')
   end
 
   def create
   	@placeholder = params[:bookmark][:file]
     data = @placeholder.read
-    array = []
-    @bookmarksarray = []
-    @bookmarks = current_user.bookmarks.build #will save add new row into bookmarks but associate user_id with current_user
-    
-    data.each_line do |line|
-    array << line.match(/A HREF=(["'])(?:(?=(\\?))\2.)*?\1/)
-    end
-    
-    array.each do | bookmark |
-    @bookmarksarray << bookmark.to_s.match(/(["'])(?:(?=(\\?))\2.)*?\1/).to_s.gsub('"', '') unless bookmark == nil
-    
-    end 
-    
-    @bookmarksarray.slice!(0)
-    
+    @bookmarks = current_user.bookmarks.build(bookmark_params)
     #can't do bookmarks.url.save because save is acting on string. Save is an ActiveRecord method. 
 
     #@bookmarksarray.each do | url |
@@ -37,7 +27,13 @@ class BookmarksController < ApplicationController
       #end
     #end
 
-  	render :text => @bookmarksarray
+      if @bookmarks.save
+        flash[:success] = "Bookmarks Saved"
+        redirect_to bookmarks_path
+      else
+        render :text => 'did not load correctly, please upload a bookmark file'
+      end
+    end
   end
 
   def destroy
@@ -55,7 +51,7 @@ class BookmarksController < ApplicationController
 
 	private
 	def bookmark_params
-      params.require(:bookmark).permit(:file)
+      params.require(:bookmark).permit(:url)
   end
 
 end

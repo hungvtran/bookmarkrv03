@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   get 'bookmarks/new'
-
+  get 'bookmarks' => 'bookmarks#show'
   root 'static_pages#home'
   get 'upload_file' => 'users#upload_file'
   get 'signup' => 'users#new'
