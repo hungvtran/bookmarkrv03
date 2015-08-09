@@ -14,9 +14,9 @@ class BookmarksController < ApplicationController
   end
 
   def create
-  	@placeholder = params[:bookmark][:file]
-    data = @placeholder.read
-    @bookmarks = current_user.bookmarks.build(bookmark_params)
+  	#@placeholder = params[:bookmark][:file]
+    data = params[:bookmark][:file].read
+    #@bookmarks = current_user.bookmarks.build(bookmark_params)
     #can't do bookmarks.url.save because save is acting on string. Save is an ActiveRecord method. 
 
     #@bookmarksarray.each do | url |
@@ -35,10 +35,12 @@ class BookmarksController < ApplicationController
         flash[:success] = "Bookmarks Saved"
         redirect_to bookmarks_path
       else
-        render :text => 'did not load correctly, please upload a bookmark file'
+        flash[:alert] = "Bookmark file did not load correctly. Please upload a Bookmark file from browser"
       end
-
+    else
+        render :text => 'did not load correctly, please upload a bookmark file'
     end
+
   end
 
   def destroy
