@@ -19,7 +19,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       log_in @user
-      flash[:success] = "Signup Successful!"
+      flash[:success] = "Sign-up Successful!"
       render 'show'
     else
       render 'new'
@@ -31,36 +31,21 @@ class UsersController < ApplicationController
   end
 
   def update
-  #if !params[:user][:bookmark].nil?
-  uploaded_io = params[:user][:bookmarks]
-  array = []
-  @bookmarks = []
-  file = uploaded_io.read
-  file.each_line do |line|
-  array << line.match(/A HREF=(["'])(?:(?=(\\?))\2.)*?\1/)
-  end
-  array.each do | bookmark |
-  @bookmarks << bookmark.to_s.match(/(["'])(?:(?=(\\?))\2.)*?\1/).to_s.gsub('"', '') unless bookmark == nil
-  end 
-  @bookmarks.slice!(0)
-  #need to somehow add @bookmarks to user.bookmark database
-
-  #params[:user][:bookmarks] = @bookmarks
-  render :text => @bookmarks
-  #else
-    #render :text => "Please pick a file"
-  #end
-  #current_user.update(bookmarks:@bookmarks)
-  #current_user.bookmarks.update_attributes(user_params) doesn't work
+    @user = User.find(params[:id])
+    if @user.update_attributes(user_params)
+      flash[:success] = "Profile updated"
+      redirect_to @user
+    else
+      render 'edit'
+    end
   end
   
   def upload_file
       @user ||= User.find_by(id: session[:user_id])
   end
 
-    def bookmarks
+  def bookmarks
       current_user
-      #@current_user ||= User.find_by(id: session[:user_id])
   end
 
 
@@ -83,7 +68,7 @@ class UsersController < ApplicationController
       redirect_to(root_url) unless current_user?(@user)
     end
 
-  def current_user?(user)
-    user == current_user
-  end
+    def current_user?(user)
+      user == current_user
+    end
 end

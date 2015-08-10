@@ -1,0 +1,12 @@
+<div>
+	<%= current_user.name %>
+</div>
+
+<% if !@links.nil? %>
+<div>
+	<%= @links.html_safe %>
+</div>
+
+<% else %>
+	<%= link_to "Please upload bookmarks file", upload_file_path %>
+<% end %>

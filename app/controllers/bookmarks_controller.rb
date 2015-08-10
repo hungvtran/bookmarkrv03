@@ -1,25 +1,40 @@
 class BookmarksController < ApplicationController
+  include BookmarksHelper
+
   def new
-  	@bookmarks = Bookmark.new
+  	@bookmarks = current_user.bookmarks.build
+  end
+
+  def edit
+  end
+
+  def show
+      @links = current_user.bookmarks.last.links unless user_has_no_bookmarks?
+  end
+
+  def create
+
+    data = params[:bookmark][:file].read
+    @new_links = current_user.bookmarks.build(links: data.force_encoding('UTF-8'))
+
+      if @new_links.save
+        flash[:success] = "Bookmarks Saved"
+        redirect_to bookmarks_path
+      else
+        flash[:alert] = "Bookmark file did not load correctly. Please upload a Bookmark file from browser"
+      end
+
+  end
+
+  def destroy
   end
 
   def update
-	  uploaded_io = params[:bookmarks][:file]
-	  array = []
-	  @bookmarks = []
-	  file = uploaded_io.read
-	  
-	  file.each_line do |line|
-	  array << line.match(/A HREF=(["'])(?:(?=(\\?))\2.)*?\1/)
-	  end
-	  
-	  array.each do | url |
-	  @bookmarks << url.to_s.match(/(["'])(?:(?=(\\?))\2.)*?\1/).to_s.gsub('"', '') unless bookmark == nil
-	  end 
-	  
-	  @bookmarks.slice!(0)
-	  render :text => @bookmarks
 	end
 
+	private
+	def bookmark_params
+      params.require(:bookmark).permit(:links)
+  end
 
 end
