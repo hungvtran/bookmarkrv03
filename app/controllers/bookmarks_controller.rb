@@ -8,9 +8,7 @@ class BookmarksController < ApplicationController
   end
 
   def show
-      #if data[0..34] == '<!DOCTYPE NETSCAPE-Bookmark-file-1>'
-        #data.sub!("<!DOCTYPE NETSCAPE-Bookmark-file-1>", "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n
-      #<link rel=\"stylesheet\" type=\"text/css\" href=\"app\assets\stylesheets\application.css\">")
+      @links = current_user.bookmarks.last.url
   end
 
   def create
@@ -26,9 +24,9 @@ class BookmarksController < ApplicationController
       #end
     #end
 
-    if data[0..34] == '<!DOCTYPE NETSCAPE-Bookmark-file-1>'
-      data.sub!("<!DOCTYPE NETSCAPE-Bookmark-file-1>", "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n
-      <link rel=\"stylesheet\" type=\"text/css\" href=\"app\assets\stylesheets\application.css\">")
+    #if data[0..34] == '<!DOCTYPE NETSCAPE-Bookmark-file-1>'
+      #data.sub!("<!DOCTYPE NETSCAPE-Bookmark-file-1>", "<!DOCTYPE NETSCAPE-Bookmark-file-1>\n
+      #<link rel=\"stylesheet\" type=\"text/css\" href=\"app\assets\stylesheets\application.css\">")
       @new_url = current_user.bookmarks.build(url: data.force_encoding('UTF-8'))
 
       if @new_url.save
@@ -37,9 +35,9 @@ class BookmarksController < ApplicationController
       else
         flash[:alert] = "Bookmark file did not load correctly. Please upload a Bookmark file from browser"
       end
-    else
-        render :text => 'did not load correctly, please upload a bookmark file'
-    end
+    #else
+        #render :text => 'did not load correctly, please upload a bookmark file'
+    #end
 
   end
 
